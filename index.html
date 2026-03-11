@@ -6,6 +6,7 @@
     <title>Оформление заказа</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Используем системные переменные Telegram для автоматической смены тем */
         :root {
             --bg-color: var(--tg-theme-bg-color, #ffffff);
             --text-color: var(--tg-theme-text-color, #222222);
@@ -24,54 +25,84 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            -webkit-user-select: none;
         }
 
-        .container { width: 100%; max-width: 400px; }
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
 
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h2 { margin: 10px 0 5px 0; font-size: 20px; }
-        .header p { color: var(--hint-color); font-size: 14px; margin: 0; }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-        .form-group { margin-bottom: 18px; }
-        
-        label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-size: 13px; 
+        .header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--hint-color);
+            margin: 5px 0 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--hint-color);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        input {
+        input, select {
             width: 100%;
-            padding: 14px;
+            padding: 12px 14px;
             border: 1px solid transparent;
             border-radius: 12px;
             background-color: var(--secondary-bg);
             color: var(--text-color);
             font-size: 16px;
-            transition: border 0.2s ease;
             box-sizing: border-box;
+            outline: none;
+            appearance: none; /* Убирает стандартные стрелки в Safari */
         }
 
-        input:focus {
-            outline: none;
+        input:focus, select:focus {
             border: 1px solid var(--button-color);
+        }
+
+        .qty-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qty-input {
+            width: 80px !important;
+            text-align: center;
+            font-weight: bold;
         }
 
         .footer-note {
             font-size: 12px;
             color: var(--hint-color);
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
             line-height: 1.4;
         }
 
-        /* Кнопка Telegram MainButton настраивается через JS, 
-           но мы оставим запасную стильную кнопку внутри */
+        /* Стиль для кнопки, если MainButton не сработает (на ПК) */
         .submit-btn {
+            display: none; /* Скрыта в ТГ, так как там есть MainButton */
             width: 100%;
             padding: 16px;
             background-color: var(--button-color);
@@ -80,69 +111,111 @@
             border-radius: 14px;
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h2>Оформление доставки</h2>
-            <p>Заполните данные для отправки заказа</p>
-        </div>
-        
-        <div class="form-group">
-            <label>Ваше имя</label>
-            <input type="text" id="name" placeholder="Фамилия и Имя">
+            <h2>Ваш заказ</h2>
+            <p>Заполните данные для доставки</p>
         </div>
 
         <div class="form-group">
-            <label>Контактный телефон</label>
-            <input type="tel" id="phone" placeholder="+7 (___) ___-__-__">
+            <label>Количество наборов</label>
+            <div class="qty-wrapper">
+                <input type="number" id="quantity" value="1" min="1" max="50" class="qty-input">
+                <span>шт.</span>
+            </div>
         </div>
 
         <div class="form-group">
-            <label>Куда отправить?</label>
-            <input type="text" id="address" placeholder="Город, ПВЗ СДЭК или адрес">
+            <label>ФИО получателя (полностью)</label>
+            <input type="text" id="name" placeholder="Иванов Иван Иванович" autocomplete="name">
         </div>
 
-        <button class="submit-btn" id="main-button" onclick="sendData()">Подтвердить заказ</button>
+        <div class="form-group">
+            <label>Телефон для связи</label>
+            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" autocomplete="tel">
+        </div>
+
+        <div class="form-group">
+            <label>Способ доставки</label>
+            <select id="delivery">
+                <option value="СДЭК (ПВЗ)">СДЭК — до пункта выдачи</option>
+                <option value="СДЭК (Курьер)">СДЭК — курьером до двери</option>
+                <option value="Почта России">Почта России</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Город и адрес доставки / ПВЗ</label>
+            <input type="text" id="address" placeholder="г. Москва, ул. Ленина 10, СДЭК">
+        </div>
+
+        <button class="submit-btn" id="backup-btn" onclick="sendData()">Оформить заказ</button>
 
         <p class="footer-note">
             Нажимая кнопку, вы подтверждаете правильность данных.<br>
-            Я свяжусь с вами для уточнения деталей оплаты.
+            Я пришлю расчет доставки и реквизиты в чат.
         </p>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand();
+        tg.expand(); // Разворачиваем на всё окно
         tg.ready();
 
-        // Настройка главной кнопки Telegram (внизу экрана)
-        tg.MainButton.text = "ПОДТВЕРДИТЬ";
+        // Настраиваем главную кнопку Telegram
+        tg.MainButton.text = "ОФОРМИТЬ ЗАКАЗ";
+        tg.MainButton.textColor = "#FFFFFF";
+        tg.MainButton.color = "#248bed";
         tg.MainButton.show();
-        tg.MainButton.onClick(sendData);
+
+        // Обработка нажатия на главную кнопку
+        tg.MainButton.onClick(function() {
+            sendData();
+        });
 
         function sendData() {
-            let name = document.getElementById("name").value;
-            let phone = document.getElementById("phone").value;
-            let address = document.getElementById("address").value;
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const address = document.getElementById("address").value.trim();
+            const quantity = document.getElementById("quantity").value;
+            const delivery = document.getElementById("delivery").value;
 
-            if (!name || !phone || !address) {
-                tg.showAlert("Пожалуйста, заполните все поля формы.");
+            // Простая валидация
+            if (name.length < 5) {
+                tg.showAlert("Пожалуйста, введите ФИО полностью.");
+                return;
+            }
+            if (phone.length < 10) {
+                tg.showAlert("Проверьте номер телефона.");
+                return;
+            }
+            if (address.length < 5) {
+                tg.showAlert("Введите корректный адрес доставки.");
                 return;
             }
 
-            let data = {
+            // Формируем объект с данными
+            const data = {
                 name: name,
                 phone: phone,
-                address: address
+                address: address,
+                quantity: quantity,
+                delivery: delivery
             };
 
+            // Отправляем данные боту
             tg.sendData(JSON.stringify(data));
+            tg.close();
+        }
+
+        // Если открыто не в Telegram, показываем обычную кнопку
+        if (!tg.initDataUnsafe.user) {
+            document.getElementById("backup-btn").style.display = "block";
         }
     </script>
 </body>
