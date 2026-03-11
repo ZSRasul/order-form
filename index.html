@@ -2,220 +2,87 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Оформление заказа</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Используем системные переменные Telegram для автоматической смены тем */
-        :root {
-            --bg-color: var(--tg-theme-bg-color, #ffffff);
-            --text-color: var(--tg-theme-text-color, #222222);
-            --hint-color: var(--tg-theme-hint-color, #999999);
-            --button-color: var(--tg-theme-button-color, #248bed);
-            --button-text: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { 
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; 
+            box-sizing: border-box; background: var(--tg-theme-secondary-bg-color); color: var(--tg-theme-text-color);
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            -webkit-user-select: none;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h2 {
-            margin: 0;
-            font-size: 22px;
-        }
-
-        .header p {
-            font-size: 14px;
-            color: var(--hint-color);
-            margin: 5px 0 0;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--hint-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid transparent;
-            border-radius: 12px;
-            background-color: var(--secondary-bg);
-            color: var(--text-color);
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-            appearance: none; /* Убирает стандартные стрелки в Safari */
-        }
-
-        input:focus, select:focus {
-            border: 1px solid var(--button-color);
-        }
-
-        .qty-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .qty-input {
-            width: 80px !important;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .footer-note {
-            font-size: 12px;
-            color: var(--hint-color);
-            text-align: center;
-            margin-top: 25px;
-            line-height: 1.4;
-        }
-
-        /* Стиль для кнопки, если MainButton не сработает (на ПК) */
-        .submit-btn {
-            display: none; /* Скрыта в ТГ, так как там есть MainButton */
-            width: 100%;
-            padding: 16px;
-            background-color: var(--button-color);
-            color: var(--button-text);
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 20px;
+        .btn { 
+            display: block; width: 100%; padding: 15px; border: none; border-radius: 8px; 
+            background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); 
+            font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>Ваш заказ</h2>
-            <p>Заполните данные для доставки</p>
-        </div>
-
-        <div class="form-group">
-            <label>Количество наборов</label>
-            <div class="qty-wrapper">
-                <input type="number" id="quantity" value="1" min="1" max="50" class="qty-input">
-                <span>шт.</span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>ФИО получателя (полностью)</label>
-            <input type="text" id="name" placeholder="Иванов Иван Иванович" autocomplete="name">
-        </div>
-
-        <div class="form-group">
-            <label>Телефон для связи</label>
-            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" autocomplete="tel">
-        </div>
-
-        <div class="form-group">
-            <label>Способ доставки</label>
-            <select id="delivery">
-                <option value="СДЭК (ПВЗ)">СДЭК — до пункта выдачи</option>
-                <option value="Почта России">Почта России</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Город и адрес доставки / ПВЗ</label>
-            <input type="text" id="address" placeholder="г. Москва, ул. Ленина 10, СДЭК">
-        </div>
-
-        <button class="submit-btn" id="backup-btn" onclick="sendData()">Оформить заказ</button>
-
-        <p class="footer-note">
-            Нажимая кнопку, вы подтверждаете правильность данных.<br>
-            Я пришлю расчет доставки и реквизиты в чат.
-        </p>
+    <h3>📦 Данные для доставки</h3>
+    <div class="form-group">
+        <label>ФИО</label>
+        <input type="text" id="name" placeholder="Иванов Иван Иванович">
     </div>
+    <div class="form-group">
+        <label>Телефон</label>
+        <input type="tel" id="phone" placeholder="+7 (900) 000-00-00">
+    </div>
+    <div class="form-group">
+        <label>Адрес (Город, ПВЗ или дом)</label>
+        <textarea id="address" rows="2" placeholder="г. Москва, ул. Ленина, д. 1, кв. 1"></textarea>
+    </div>
+    <div class="form-group">
+        <label>Количество (шт)</label>
+        <input type="number" id="quantity" value="1" min="1">
+    </div>
+    <div class="form-group">
+        <label>Способ доставки</label>
+        <select id="delivery">
+            <option value="СДЭК">СДЭК</option>
+            <option value="Почта России">Почта России</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Комментарий (необязательно)</label>
+        <input type="text" id="comment" placeholder="Например: номер ПВЗ">
+    </div>
+
+    <button class="btn" id="order_btn">Подтвердить заказ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем на всё окно
-        tg.ready();
+        tg.expand(); // Разворачиваем на все окно
 
-        // Настраиваем главную кнопку Telegram
-        tg.MainButton.text = "ОФОРМИТЬ ЗАКАЗ";
-        tg.MainButton.textColor = "#FFFFFF";
-        tg.MainButton.color = "#248bed";
-        tg.MainButton.show();
+        let btn = document.getElementById("order_btn");
 
-        // Обработка нажатия на главную кнопку
-        tg.MainButton.onClick(function() {
-            sendData();
-        });
+        btn.addEventListener("click", () => {
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let address = document.getElementById("address").value;
+            let quantity = document.getElementById("quantity").value;
+            let delivery = document.getElementById("delivery").value;
+            let comment = document.getElementById("comment").value;
 
-        function sendData() {
-            const name = document.getElementById("name").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const address = document.getElementById("address").value.trim();
-            const quantity = document.getElementById("quantity").value;
-            const delivery = document.getElementById("delivery").value;
-
-            // Простая валидация
-            if (name.length < 5) {
-                tg.showAlert("Пожалуйста, введите ФИО полностью.");
-                return;
-            }
-            if (phone.length < 10) {
-                tg.showAlert("Проверьте номер телефона.");
-                return;
-            }
-            if (address.length < 5) {
-                tg.showAlert("Введите корректный адрес доставки.");
+            if (name.length < 5 || phone.length < 5 || address.length < 10) {
+                alert("Пожалуйста, заполните данные корректно");
                 return;
             }
 
-            // Формируем объект с данными
-            const data = {
+            let data = {
                 name: name,
                 phone: phone,
                 address: address,
                 quantity: quantity,
-                delivery: delivery
+                delivery: delivery,
+                comment: comment
             };
 
-            // Отправляем данные боту
-            tg.sendData(JSON.stringify(data));
-            tg.close();
-        }
-
-        // Если открыто не в Telegram, показываем обычную кнопку
-        if (!tg.initDataUnsafe.user) {
-            document.getElementById("backup-btn").style.display = "block";
-        }
+            tg.sendData(JSON.stringify(data)); // Отправляем JSON боту
+            tg.close(); // Закрываем форму
+        });
     </script>
 </body>
 </html>
