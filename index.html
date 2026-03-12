@@ -180,7 +180,7 @@
         const textElem = document.getElementById('urgency-text');
         
         const seed = now.getDate() + now.getMonth();
-        const ordersCount = 8 + (seed % 8); 
+        const ordersCount = 3 + (seed % 5); 
 
         if (hours < 16) {
             textElem.innerHTML = `Сегодня отправляем <b>${ordersCount} заказов</b>. Успей оформить до <b>16:00</b>, чтобы карточки уехали сегодня!`;
