@@ -7,121 +7,208 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary: var(--tg-theme-button-color, #2481cc);
+            --primary: #2481cc;
             --bg: var(--tg-theme-bg-color, #ffffff);
             --text: var(--tg-theme-text-color, #222222);
             --sec-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
+            --hint: var(--tg-theme-hint-color, #8e8e93);
         }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; }
-        
-        /* Аккордеоны */
-        details { background: var(--sec-bg); padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 14px; }
-        summary { font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
-        
-        /* Выбор тарифа */
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 20px; padding-bottom: 100px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h2 { margin: 0; font-size: 22px; font-weight: 700; }
+
+        /* Тарифы */
         .option-card {
-            border: 2px solid var(--sec-bg); border-radius: 15px; padding: 15px; margin-bottom: 12px; 
-            cursor: pointer; transition: all 0.2s; position: relative;
+            background: var(--sec-bg);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
         }
-        .option-card.active { border-color: var(--primary); background: rgba(36, 129, 204, 0.05); }
-        .option-card b { display: block; font-size: 16px; margin-bottom: 4px; }
-        .option-card span { font-size: 13px; opacity: 0.7; }
-        .price-tag { position: absolute; right: 15px; top: 15px; font-weight: 700; color: var(--primary); }
-        .badge { background: var(--primary); color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; position: absolute; top: -10px; left: 15px; }
-
-        /* Поля ввода */
-        .form-group { margin-top: 20px; }
-        label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; opacity: 0.6; }
-        input, select, textarea { 
-            width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; 
-            background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box; margin-bottom: 10px;
+        .option-card.active {
+            border-color: var(--primary);
+            background: rgba(36, 129, 204, 0.05);
+        }
+        .option-card b { display: block; font-size: 16px; margin-bottom: 4px; padding-right: 60px; }
+        .option-card span { font-size: 13px; opacity: 0.7; line-height: 1.4; display: block; }
+        .price-tag {
+            position: absolute; right: 16px; top: 16px;
+            font-weight: 700; color: var(--primary); font-size: 16px;
+        }
+        .badge {
+            position: absolute; top: -10px; left: 16px;
+            background: var(--primary); color: white;
+            font-size: 10px; font-weight: 700;
+            padding: 2px 8px; border-radius: 8px;
+            text-transform: uppercase;
         }
 
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: var(--bg); border-top: 1px solid rgba(0,0,0,0.05); box-sizing: border-box; }
-        .btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-size: 16px; font-weight: 700; }
+        /* Аккордеоны */
+        details { background: var(--sec-bg); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+        summary { 
+            padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; 
+            list-style: none; display: flex; justify-content: space-between; align-items: center;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '→'; opacity: 0.3; transition: transform 0.2s; }
+        details[open] summary::after { transform: rotate(90deg); }
+        .details-content { padding: 0 16px 12px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
+
+        /* Форма */
+        .form-section { margin-top: 25px; display: none; }
+        .form-section.visible { display: block; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--hint); text-transform: uppercase; }
+        input, textarea {
+            width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px;
+            background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box;
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+
+        /* Кнопка внизу */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            padding: 16px; background: var(--bg);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            box-sizing: border-box; z-index: 100;
+        }
+        .btn-main {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            background: var(--primary); color: white;
+            font-size: 16px; font-weight: 700; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-<div style="text-align:center; margin-bottom:20px;"><h2>🍏 Выберите ваш формат</h2></div>
-
-<div class="option-card" onclick="selectType('recipes', 990, this)">
-    <b>📖 Сборник рецептов (PDF)</b>
-    <span>28 любимых рецептов прямо в Telegram</span>
-    <div class="price-tag">990₽</div>
+<div class="header">
+    <h2>Выберите формат 🍏</h2>
 </div>
 
-<div class="option-card" onclick="selectType('cards', 1990, this)">
-    <b>🧲 Магнитные карточки</b>
-    <span>154 магнита + маркер (Доставка РФ)</span>
-    <div class="price-tag">1990₽</div>
-</div>
-
-<div class="option-card active" onclick="selectType('combo', 2680, this)">
-    <div class="badge">ВЫГОДНО</div>
-    <b>🔥 КОМБО: Карточки + PDF-рецепты</b>
-    <span>Полная система управления кухней</span>
-    <div class="price-tag">2680₽</div>
-</div>
-
-<details style="margin-top: 20px;">
-    <summary>📦 Что именно в наборе?</summary>
-    <div style="padding-top:10px; opacity:0.8;">
-        154 магнита с ламинацией, цветовая навигация, маркер «пиши-стирай» и чек-лист.
+<div id="options">
+    <div class="option-card" onclick="selectOption('recipes', 990, this)">
+        <b>📖 Рецепты (PDF)</b>
+        <span>28 идей для завтраков, обедов и ужинов. Мгновенный доступ.</span>
+        <div class="price-tag">990₽</div>
     </div>
-</details>
 
-<div id="shipping_info" class="form-group">
-    <label>ДАННЫЕ ДЛЯ ДОСТАВКИ (СДЭК/Почта)</label>
-    <input type="text" id="name" placeholder="ФИО">
-    <input type="tel" id="phone" placeholder="Телефон">
-    <textarea id="address" rows="2" placeholder="Город, адрес или номер ПВЗ"></textarea>
+    <div class="option-card" onclick="selectOption('cards', 1990, this)">
+        <b>🧲 Магнитные карточки</b>
+        <span>154 магнита + маркер. Физическая доставка.</span>
+        <div class="price-tag">1990₽</div>
+    </div>
+
+    <div class="option-card active" onclick="selectOption('combo', 2680, this)">
+        <div class="badge">Выгодно</div>
+        <b>🔥 COMBO: Карточки + PDF</b>
+        <span>Полная система порядка. Карточки едут к вам, PDF — сразу в бот.</span>
+        <div class="price-tag">2680₽</div>
+    </div>
+</div>
+
+<div style="margin-top: 25px;">
+    <details>
+        <summary>Что именно в наборе?</summary>
+        <div class="details-content">
+            154 магнитные карточки с категориями (мясо, птица, крупы, супы и т.д.), специальный маркер «пиши-стирай», чек-листы и инструкция.
+        </div>
+    </details>
+    <details>
+        <summary>Как работает доставка?</summary>
+        <div class="details-content">
+            Отправляем СДЭК (до пункта выдачи) или Почтой России. Трек-номер придет в бот через 24 часа после оплаты.
+        </div>
+    </details>
+</div>
+
+<div id="shipping_section" class="form-section visible">
+    <div class="form-group">
+        <label>ФИО получателя</label>
+        <input type="text" id="name" placeholder="Иванов Иван Иванович">
+    </div>
+    <div class="form-group">
+        <label>Телефон</label>
+        <input type="tel" id="phone" placeholder="+7 (900) 000-00-00">
+    </div>
+    <div class="form-group">
+        <label>Адрес (Город, ПВЗ СДЭК или дом)</label>
+        <textarea id="address" rows="2" placeholder="г. Москва, ул. Ленина, д. 1 или ПВЗ СДЭК №..."></textarea>
+    </div>
 </div>
 
 <div class="footer">
-    <button class="btn-main" id="order_btn">Оформить за 2680₽</button>
+    <button class="btn-main" id="submit_btn">Оформить за 2680₽</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
-    let currentType = 'combo';
-    let currentPrice = 2680;
+    tg.ready();
 
-    function selectType(type, price, el) {
-        currentType = type;
-        currentPrice = price;
+    let selectedProduct = 'combo';
+    let selectedPrice = 2680;
+
+    function selectOption(type, price, element) {
+        selectedProduct = type;
+        selectedPrice = price;
+
+        // Переключаем активный класс
+        document.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+
+        // Показываем/скрываем блок доставки
+        const shipping = document.getElementById('shipping_section');
+        if (type === 'recipes') {
+            shipping.classList.remove('visible');
+        } else {
+            shipping.classList.add('visible');
+        }
+
+        // Обновляем кнопку
+        document.getElementById('submit_btn').innerText = `Оформить за ${price}₽`;
         
-        // Визуальное переключение
-        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        
-        // Скрытие доставки для цифровых товаров
-        document.getElementById('shipping_info').style.display = (type === 'recipes') ? 'none' : 'block';
-        document.getElementById('order_btn').innerText = `Оформить за ${price}₽`;
+        // Легкая вибрация при смене тарифа
         tg.HapticFeedback.selectionChanged();
     }
 
-    document.getElementById('order_btn').addEventListener('click', () => {
-        let name = document.getElementById('name').value;
-        let phone = document.getElementById('phone').value;
-        let address = document.getElementById('address').value;
+    document.getElementById('submit_btn').addEventListener('click', () => {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
 
-        // Валидация (для рецептов она короче)
-        if (currentType !== 'recipes' && (name.length < 5 || phone.length < 7)) {
-            alert("Пожалуйста, заполните данные для доставки");
-            return;
+        // Валидация для физических товаров
+        if (selectedProduct !== 'recipes') {
+            if (name.length < 5 || phone.length < 7 || address.length < 10) {
+                tg.HapticFeedback.notificationOccurred('error');
+                alert("Пожалуйста, заполните данные для доставки");
+                return;
+            }
         }
 
-        tg.sendData(JSON.stringify({
-            product_type: currentType,
-            price: currentPrice,
+        const data = {
+            product_type: selectedProduct,
+            price: selectedPrice,
             name: name,
             phone: phone,
             address: address
-        }));
+        };
+
+        tg.HapticFeedback.notificationOccurred('success');
+        tg.sendData(JSON.stringify(data));
         tg.close();
     });
 </script>
+
 </body>
 </html>
