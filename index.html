@@ -19,10 +19,9 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0; padding: 20px; padding-bottom: 100px;
-            opacity: 0; transition: opacity 0.5s ease; /* Плавное появление */
+            opacity: 0; transition: opacity 0.5s ease;
         }
 
-        /* Прогресс-бар */
         #progress {
             position: fixed; top: 0; left: 0; height: 3px;
             width: 0%; background: var(--primary);
@@ -32,6 +31,7 @@
         .header { text-align: center; margin-bottom: 25px; }
         .header h2 { margin: 0; font-size: 22px; font-weight: 700; }
 
+        /* Карточки тарифов */
         .option-card {
             background: var(--sec-bg);
             border: 2px solid transparent;
@@ -42,39 +42,47 @@
         .option-card.active {
             border-color: var(--primary);
             background: rgba(36, 129, 204, 0.05);
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
         .option-card b { display: block; font-size: 16px; margin-bottom: 4px; padding-right: 60px; }
+        .option-card span { font-size: 12px; opacity: 0.7; line-height: 1.4; display: block; }
         .price-tag { position: absolute; right: 16px; top: 16px; font-weight: 700; color: var(--primary); }
         
         .badge {
             position: absolute; top: -10px; left: 16px;
             background: var(--primary); color: white;
             font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+            text-transform: uppercase;
         }
 
-        details { background: var(--sec-bg); border-radius: 12px; margin-bottom: 10px; }
-        summary { padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
-        summary::after { content: '→'; opacity: 0.3; }
+        /* FAQ и Детали */
+        .info-container { margin: 25px 0; }
+        details { background: var(--sec-bg); border-radius: 12px; margin-bottom: 8px; }
+        summary { 
+            padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; 
+            list-style: none; display: flex; justify-content: space-between; align-items: center;
+        }
+        summary::after { content: '→'; opacity: 0.3; transition: transform 0.2s; }
+        details[open] summary::after { transform: rotate(90deg); }
         .details-content { padding: 0 16px 12px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 
+        /* Форма */
         .form-section { margin-top: 25px; display: none; }
         .form-section.visible { display: block; animation: slideUp 0.4s ease; }
-        
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 700; color: var(--hint); text-transform: uppercase; letter-spacing: 0.5px; }
+        label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 700; color: var(--hint); text-transform: uppercase; }
         input, textarea {
             width: 100%; padding: 14px; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px;
             background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box;
         }
 
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); box-sizing: border-box; z-index: 100; }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); box-sizing: border-box; z-index: 100; border-top: 1px solid rgba(0,0,0,0.05); }
         .btn-main {
             width: 100%; padding: 18px; border: none; border-radius: 16px;
             background: var(--primary); color: white; font-size: 16px; font-weight: 700;
-            opacity: 0.6; transition: all 0.3s ease;
+            opacity: 0.5; transition: all 0.3s ease;
         }
         .btn-main.ready { opacity: 1; box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3); }
     </style>
@@ -84,43 +92,62 @@
 <div id="progress"></div>
 
 <div class="header">
-    <h2>Ваш выбор 🍏</h2>
+    <h2>Ваш идеальный порядок 🍏</h2>
 </div>
 
 <div id="options">
     <div class="option-card" onclick="selectOption('recipes', 990, this)">
-        <b>📖 Рецепты (PDF)</b>
-        <span style="font-size: 12px; opacity: 0.7;">28 идей. Мгновенный доступ.</span>
+        <b>📖 Рецепты (PDF-сборник)</b>
+        <span>28 идей для завтраков, обедов и ужинов. Мгновенный доступ в боте.</span>
         <div class="price-tag">990₽</div>
     </div>
 
+    <div class="option-card" onclick="selectOption('cards', 1990, this)">
+        <b>🧲 Магнитные карточки</b>
+        <span>Набор из 154 магнитов + маркер. Тот самый порядок из Reels.</span>
+        <div class="price-tag">1990₽</div>
+    </div>
+
     <div class="option-card active" onclick="selectOption('combo', 2680, this)">
-        <div class="badge">Выгодно</div>
+        <div class="badge">Лучший выбор</div>
         <b>🔥 COMBO: Карточки + PDF</b>
-        <span style="font-size: 12px; opacity: 0.7;">Полная система управления кухней.</span>
+        <span>Полная система: магниты едут к вам, а PDF открывается сразу.</span>
         <div class="price-tag">2680₽</div>
     </div>
 </div>
 
-<div style="margin-top: 20px;">
+<div class="info-container">
     <details>
-        <summary>Что в наборе?</summary>
-        <div class="details-content">154 магнита, маркер «пиши-стирай», чек-листы и инструкция.</div>
+        <summary>Что именно входит в набор?</summary>
+        <div class="details-content">
+            • 154 магнитных карточки (все категории продуктов)<br>
+            • Специальный маркер «пиши-стирай»<br>
+            • Понятная инструкция по внедрению системы<br>
+            • Чек-лист для планирования на неделю
+        </div>
+    </details>
+    <details>
+        <summary>Частые вопросы (FAQ)</summary>
+        <div class="details-content">
+            <b>Как крепятся?</b> Надежный магнитный слой, держатся на любом холодильнике.<br>
+            <b>Срок доставки?</b> Отправляем в течение 24ч. По РФ в среднем 3-5 дней.<br>
+            <b>Это безопасно?</b> Мы работаем официально, вы получите трек-номер сразу после отправки.
+        </div>
     </details>
 </div>
 
 <div id="shipping_section" class="form-section visible">
     <div class="form-group">
-        <label>ФИО</label>
+        <label>ФИО получателя</label>
         <input type="text" id="name" placeholder="Иванов Иван Иванович" oninput="updateProgress()">
     </div>
     <div class="form-group">
-        <label>Телефон</label>
+        <label>Контактный телефон</label>
         <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" oninput="updateProgress()">
     </div>
     <div class="form-group">
-        <label>Адрес (СДЭК или дом)</label>
-        <textarea id="address" rows="2" placeholder="Город, улица, дом или ПВЗ СДЭК" oninput="updateProgress()"></textarea>
+        <label>Адрес доставки (СДЭК или дом)</label>
+        <textarea id="address" rows="2" placeholder="Город, улица, дом или адрес ПВЗ СДЭК" oninput="updateProgress()"></textarea>
     </div>
 </div>
 
@@ -135,12 +162,20 @@
     let selectedProduct = 'combo';
     let selectedPrice = 2680;
 
-    // Маска для телефона
+    // Интеллектуальная маска телефона
     const phoneInput = document.getElementById('phone');
     phoneInput.addEventListener('input', (e) => {
-        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
-        if (!x[2] && x[1] !== '7') { e.target.value = x[1] ? '+7 (' : ''; return; }
-        e.target.value = !x[3] ? `+7 (${x[2]}` : `+7 (${x[2]}) ${x[3]}` + (x[4] ? `-${x[4]}` : '') + (x[5] ? `-${x[5]}` : '');
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.startsWith('7') || val.startsWith('8')) val = val.substring(1);
+        
+        let res = '+7 (';
+        if (val.length > 0) res += val.substring(0, 3);
+        if (val.length > 3) res += ') ' + val.substring(3, 6);
+        if (val.length > 6) res += '-' + val.substring(6, 8);
+        if (val.length > 8) res += '-' + val.substring(8, 10);
+        
+        e.target.value = res;
+        updateProgress();
     });
 
     function selectOption(type, price, element) {
@@ -148,7 +183,10 @@
         selectedPrice = price;
         document.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
-        document.getElementById('shipping_section').style.display = (type === 'recipes') ? 'none' : 'block';
+        
+        const shipping = document.getElementById('shipping_section');
+        shipping.style.display = (type === 'recipes') ? 'none' : 'block';
+        
         document.getElementById('submit_btn').innerText = `Оформить за ${price}₽`;
         updateProgress();
         tg.HapticFeedback.selectionChanged();
@@ -160,16 +198,16 @@
 
         if (selectedProduct) score++;
         if (selectedProduct !== 'recipes') {
-            if (document.getElementById('name').value.length > 5) score++;
+            if (document.getElementById('name').value.trim().length > 5) score++;
             if (document.getElementById('phone').value.length === 18) score++;
-            if (document.getElementById('address').value.length > 10) score++;
+            if (document.getElementById('address').value.trim().length > 10) score++;
         }
 
         const percent = (score / total) * 100;
         document.getElementById('progress').style.width = percent + '%';
         
         const btn = document.getElementById('submit_btn');
-        if (percent === 100) { btn.classList.add('ready'); } 
+        if (percent >= 99) { btn.classList.add('ready'); } 
         else { btn.classList.remove('ready'); }
     }
 
@@ -191,6 +229,9 @@
         tg.sendData(JSON.stringify(data));
         tg.close();
     }
+    
+    // Инициализация при загрузке
+    updateProgress();
 </script>
 </body>
 </html>
