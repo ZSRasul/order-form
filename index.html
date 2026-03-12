@@ -35,7 +35,7 @@
             display: none; background: rgba(255, 59, 48, 0.08); 
             border: 1px solid rgba(255, 59, 48, 0.2); 
             border-radius: 12px; padding: 12px; margin-bottom: 20px; 
-            align-items: center; gap: 10px;
+            align-items: center; gap: 10px; animation: slideUp 0.4s ease;
         }
 
         .option-card {
@@ -48,16 +48,28 @@
         .option-card.active {
             border-color: var(--primary);
             background: rgba(36, 129, 204, 0.05);
+            transform: scale(1.01);
         }
-        .option-card b { display: block; font-size: 16px; margin-bottom: 4px; }
-        .option-card span { font-size: 12px; opacity: 0.7; display: block; }
+        .option-card b { display: block; font-size: 16px; margin-bottom: 4px; padding-right: 60px; }
+        .option-card span { font-size: 12px; opacity: 0.7; line-height: 1.4; display: block; }
         .price-tag { position: absolute; right: 16px; top: 16px; font-weight: 700; color: var(--primary); }
         
         .badge {
             position: absolute; top: -10px; left: 16px;
             background: var(--primary); color: white;
             font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+            text-transform: uppercase;
         }
+
+        .info-container { margin: 25px 0; }
+        details { background: var(--sec-bg); border-radius: 12px; margin-bottom: 8px; }
+        summary { 
+            padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; 
+            list-style: none; display: flex; justify-content: space-between; align-items: center;
+        }
+        summary::after { content: '→'; opacity: 0.3; transition: transform 0.2s; }
+        details[open] summary::after { transform: rotate(90deg); }
+        .details-content { padding: 0 16px 12px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 
         .form-section { margin-top: 25px; }
         .form-group { margin-bottom: 15px; }
@@ -67,13 +79,14 @@
             background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box;
         }
 
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); border-top: 1px solid rgba(0,0,0,0.05); }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); box-sizing: border-box; z-index: 100; border-top: 1px solid rgba(0,0,0,0.05); }
         .btn-main {
             width: 100%; padding: 18px; border: none; border-radius: 16px;
             background: var(--primary); color: white; font-size: 16px; font-weight: 700;
             opacity: 0.5; transition: all 0.3s ease;
         }
-        .btn-main.ready { opacity: 1; }
+        .btn-main.ready { opacity: 1; box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body onload="document.body.style.opacity='1'; updateUrgency();">
@@ -86,28 +99,48 @@
 
 <div id="urgency-banner" class="urgency-container">
     <span style="font-size: 20px;">🔥</span>
-    <span id="urgency-text" style="font-size: 13px; color: #d32f2f; font-weight: 500;"></span>
+    <span id="urgency-text" style="font-size: 13px; color: #d32f2f; line-height: 1.4; font-weight: 500;"></span>
 </div>
 
 <div id="options">
-    <div class="option-card" id="card-recipes" onclick="selectOption('recipes', 990, this)">
+    <div class="option-card" onclick="selectOption('recipes', 990, this)">
         <b>📖 Рецепты (PDF-сборник)</b>
-        <span>Доступ сразу после оплаты.</span>
+        <span>28 готовых решений: когда нет сил думать, просто открываешь и готовишь. Доступ сразу.</span>
         <div class="price-tag">990₽</div>
     </div>
 
-    <div class="option-card" id="card-cards" onclick="selectOption('cards', 1990, this)">
+    <div class="option-card" onclick="selectOption('cards', 1990, this)">
         <b>🧲 Магнитные карточки</b>
-        <span>154 магнита. Порядок из Reels.</span>
+        <span>154 магнита + маркер. Тот самый порядок из Reels.</span>
         <div class="price-tag">1990₽</div>
     </div>
 
-    <div class="option-card active" id="card-combo" onclick="selectOption('combo', 2680, this)">
+    <div class="option-card active" onclick="selectOption('combo', 2680, this)">
         <div class="badge">Лучший выбор</div>
         <b>🔥 COMBO: Карточки + PDF</b>
-        <span>Полная система. Максимальная выгода.</span>
+        <span>Полная система: магниты едут к вам, PDF открывается сразу.</span>
         <div class="price-tag">2680₽</div>
     </div>
+</div>
+
+<div class="info-container">
+    <details>
+        <summary>Что именно входит в набор?</summary>
+        <div class="details-content">
+            • 154 магнитных карточки (все категории продуктов)<br>
+            • Специальный маркер «пиши-стирай»<br>
+            • Понятная инструкция по внедрению системы<br>
+            • Чек-лист для планирования на неделю
+        </div>
+    </details>
+    <details>
+        <summary>Частые вопросы (FAQ)</summary>
+        <div class="details-content">
+            <b>Как крепятся?</b> Надежный магнитный слой, держатся на холодильнике.<br>
+            <b>Срок доставки?</b> Отправляем в течение 24ч. По РФ 3-5 дней.<br>
+            <b>Это безопасно?</b> Да, вы получите трек-номер сразу после отправки.
+        </div>
+    </details>
 </div>
 
 <div id="shipping_section" class="form-section">
@@ -121,7 +154,7 @@
     </div>
     <div class="form-group">
         <label>Адрес доставки (СДЭК или дом)</label>
-        <textarea id="address" rows="2" placeholder="Город, ПВЗ СДЭК или домашний адрес" oninput="updateProgress()"></textarea>
+        <textarea id="address" rows="2" placeholder="Город, улица, дом или адрес ПВЗ СДЭК" oninput="updateProgress()"></textarea>
     </div>
 </div>
 
@@ -140,12 +173,13 @@
         const now = new Date();
         const banner = document.getElementById('urgency-banner');
         const textElem = document.getElementById('urgency-text');
-        const ordersCount = 3 + (now.getDate() % 5); 
+        const seed = now.getDate() + now.getMonth();
+        const ordersCount = 3 + (seed % 5); 
 
         if (now.getHours() < 16) {
-            textElem.innerHTML = `Сегодня отправляем <b>${ordersCount} заказов</b>. Успей до 16:00!`;
+            textElem.innerHTML = `Сегодня отправляем <b>${ordersCount} заказов</b>. Успей оформить до <b>16:00</b>, чтобы карточки уехали сегодня!`;
         } else {
-            textElem.innerHTML = `Успей оформить сейчас, чтобы попасть в утреннюю отправку!`;
+            textElem.innerHTML = `Дневная партия уехала. Успей оформить сейчас, чтобы попасть в <b>первую отправку завтра утром</b>!`;
         }
         banner.style.display = 'flex';
     }
@@ -169,7 +203,6 @@
         document.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
         
-        // Скрываем поля доставки только если выбраны чистые рецепты
         const shipping = document.getElementById('shipping_section');
         shipping.style.display = (type === 'recipes') ? 'none' : 'block';
         
@@ -180,9 +213,8 @@
 
     function updateProgress() {
         let isReady = false;
-        
         if (selectedProduct === 'recipes') {
-            isReady = true; // Для PDF данные не обязательны (возьмем из TG)
+            isReady = true;
         } else {
             const nameOk = document.getElementById('name').value.trim().length > 5;
             const phoneOk = document.getElementById('phone').value.length === 18;
@@ -203,8 +235,7 @@
     }
 
     function sendData() {
-        const btn = document.getElementById('submit_btn');
-        if (!btn.classList.contains('ready')) {
+        if (!document.getElementById('submit_btn').classList.contains('ready')) {
             tg.HapticFeedback.notificationOccurred('error');
             return;
         }
@@ -212,9 +243,9 @@
         const data = {
             product_type: selectedProduct,
             price: selectedPrice,
-            name: document.getElementById('name').value || "Не указано (PDF)",
-            phone: document.getElementById('phone').value || "Не указано",
-            address: document.getElementById('address').value || "Цифровая доставка"
+            name: document.getElementById('name').value || "Цифровой заказ",
+            phone: document.getElementById('phone').value || "Не указан",
+            address: document.getElementById('address').value || "Доставка в PDF"
         };
 
         tg.sendData(JSON.stringify(data));
