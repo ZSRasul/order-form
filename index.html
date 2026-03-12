@@ -15,200 +15,182 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0; padding: 20px; padding-bottom: 100px;
-            -webkit-font-smoothing: antialiased;
+            opacity: 0; transition: opacity 0.5s ease; /* Плавное появление */
+        }
+
+        /* Прогресс-бар */
+        #progress {
+            position: fixed; top: 0; left: 0; height: 3px;
+            width: 0%; background: var(--primary);
+            z-index: 1000; transition: width 0.3s ease;
         }
 
         .header { text-align: center; margin-bottom: 25px; }
         .header h2 { margin: 0; font-size: 22px; font-weight: 700; }
 
-        /* Тарифы */
         .option-card {
             background: var(--sec-bg);
             border: 2px solid transparent;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
+            border-radius: 16px; padding: 16px;
+            margin-bottom: 12px; cursor: pointer;
+            position: relative; transition: all 0.2s ease;
         }
         .option-card.active {
             border-color: var(--primary);
             background: rgba(36, 129, 204, 0.05);
+            transform: scale(1.02);
         }
         .option-card b { display: block; font-size: 16px; margin-bottom: 4px; padding-right: 60px; }
-        .option-card span { font-size: 13px; opacity: 0.7; line-height: 1.4; display: block; }
-        .price-tag {
-            position: absolute; right: 16px; top: 16px;
-            font-weight: 700; color: var(--primary); font-size: 16px;
-        }
+        .price-tag { position: absolute; right: 16px; top: 16px; font-weight: 700; color: var(--primary); }
+        
         .badge {
             position: absolute; top: -10px; left: 16px;
             background: var(--primary); color: white;
-            font-size: 10px; font-weight: 700;
-            padding: 2px 8px; border-radius: 8px;
-            text-transform: uppercase;
+            font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px;
         }
 
-        /* Аккордеоны */
-        details { background: var(--sec-bg); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
-        summary { 
-            padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; 
-            list-style: none; display: flex; justify-content: space-between; align-items: center;
-        }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: '→'; opacity: 0.3; transition: transform 0.2s; }
-        details[open] summary::after { transform: rotate(90deg); }
+        details { background: var(--sec-bg); border-radius: 12px; margin-bottom: 10px; }
+        summary { padding: 12px 16px; font-size: 14px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+        summary::after { content: '→'; opacity: 0.3; }
         .details-content { padding: 0 16px 12px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 
-        /* Форма */
         .form-section { margin-top: 25px; display: none; }
-        .form-section.visible { display: block; }
+        .form-section.visible { display: block; animation: slideUp 0.4s ease; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--hint); text-transform: uppercase; }
+        label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 700; color: var(--hint); text-transform: uppercase; letter-spacing: 0.5px; }
         input, textarea {
-            width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px;
+            width: 100%; padding: 14px; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px;
             background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box;
         }
-        input:focus { outline: none; border-color: var(--primary); }
 
-        /* Кнопка внизу */
-        .footer {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            padding: 16px; background: var(--bg);
-            border-top: 1px solid rgba(0,0,0,0.05);
-            box-sizing: border-box; z-index: 100;
-        }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); box-sizing: border-box; z-index: 100; }
         .btn-main {
-            width: 100%; padding: 16px; border: none; border-radius: 14px;
-            background: var(--primary); color: white;
-            font-size: 16px; font-weight: 700; cursor: pointer;
+            width: 100%; padding: 18px; border: none; border-radius: 16px;
+            background: var(--primary); color: white; font-size: 16px; font-weight: 700;
+            opacity: 0.6; transition: all 0.3s ease;
         }
+        .btn-main.ready { opacity: 1; box-shadow: 0 4px 15px rgba(36, 129, 204, 0.3); }
     </style>
 </head>
-<body>
+<body onload="document.body.style.opacity='1'">
+
+<div id="progress"></div>
 
 <div class="header">
-    <h2>Выберите формат 🍏</h2>
+    <h2>Ваш выбор 🍏</h2>
 </div>
 
 <div id="options">
     <div class="option-card" onclick="selectOption('recipes', 990, this)">
         <b>📖 Рецепты (PDF)</b>
-        <span>28 идей для завтраков, обедов и ужинов. Мгновенный доступ.</span>
+        <span style="font-size: 12px; opacity: 0.7;">28 идей. Мгновенный доступ.</span>
         <div class="price-tag">990₽</div>
-    </div>
-
-    <div class="option-card" onclick="selectOption('cards', 1990, this)">
-        <b>🧲 Магнитные карточки</b>
-        <span>154 магнита + маркер. Физическая доставка.</span>
-        <div class="price-tag">1990₽</div>
     </div>
 
     <div class="option-card active" onclick="selectOption('combo', 2680, this)">
         <div class="badge">Выгодно</div>
         <b>🔥 COMBO: Карточки + PDF</b>
-        <span>Полная система порядка. Карточки едут к вам, PDF — сразу в бот.</span>
+        <span style="font-size: 12px; opacity: 0.7;">Полная система управления кухней.</span>
         <div class="price-tag">2680₽</div>
     </div>
 </div>
 
-<div style="margin-top: 25px;">
+<div style="margin-top: 20px;">
     <details>
-        <summary>Что именно в наборе?</summary>
-        <div class="details-content">
-            154 магнитные карточки с категориями (мясо, птица, крупы, супы и т.д.), специальный маркер «пиши-стирай», чек-листы и инструкция.
-        </div>
-    </details>
-    <details>
-        <summary>Как работает доставка?</summary>
-        <div class="details-content">
-            Отправляем СДЭК (до пункта выдачи) или Почтой России. Трек-номер придет в бот через 24 часа после оплаты.
-        </div>
+        <summary>Что в наборе?</summary>
+        <div class="details-content">154 магнита, маркер «пиши-стирай», чек-листы и инструкция.</div>
     </details>
 </div>
 
 <div id="shipping_section" class="form-section visible">
     <div class="form-group">
-        <label>ФИО получателя</label>
-        <input type="text" id="name" placeholder="Иванов Иван Иванович">
+        <label>ФИО</label>
+        <input type="text" id="name" placeholder="Иванов Иван Иванович" oninput="updateProgress()">
     </div>
     <div class="form-group">
         <label>Телефон</label>
-        <input type="tel" id="phone" placeholder="+7 (900) 000-00-00">
+        <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" oninput="updateProgress()">
     </div>
     <div class="form-group">
-        <label>Адрес (Город, ПВЗ СДЭК или дом)</label>
-        <textarea id="address" rows="2" placeholder="г. Москва, ул. Ленина, д. 1 или ПВЗ СДЭК №..."></textarea>
+        <label>Адрес (СДЭК или дом)</label>
+        <textarea id="address" rows="2" placeholder="Город, улица, дом или ПВЗ СДЭК" oninput="updateProgress()"></textarea>
     </div>
 </div>
 
 <div class="footer">
-    <button class="btn-main" id="submit_btn">Оформить за 2680₽</button>
+    <button class="btn-main" id="submit_btn" onclick="sendData()">Оформить за 2680₽</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
-    tg.ready();
 
     let selectedProduct = 'combo';
     let selectedPrice = 2680;
 
+    // Маска для телефона
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', (e) => {
+        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+        if (!x[2] && x[1] !== '7') { e.target.value = x[1] ? '+7 (' : ''; return; }
+        e.target.value = !x[3] ? `+7 (${x[2]}` : `+7 (${x[2]}) ${x[3]}` + (x[4] ? `-${x[4]}` : '') + (x[5] ? `-${x[5]}` : '');
+    });
+
     function selectOption(type, price, element) {
         selectedProduct = type;
         selectedPrice = price;
-
-        // Переключаем активный класс
         document.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
-
-        // Показываем/скрываем блок доставки
-        const shipping = document.getElementById('shipping_section');
-        if (type === 'recipes') {
-            shipping.classList.remove('visible');
-        } else {
-            shipping.classList.add('visible');
-        }
-
-        // Обновляем кнопку
+        document.getElementById('shipping_section').style.display = (type === 'recipes') ? 'none' : 'block';
         document.getElementById('submit_btn').innerText = `Оформить за ${price}₽`;
-        
-        // Легкая вибрация при смене тарифа
+        updateProgress();
         tg.HapticFeedback.selectionChanged();
     }
 
-    document.getElementById('submit_btn').addEventListener('click', () => {
-        const name = document.getElementById('name').value;
-        const phone = document.getElementById('phone').value;
-        const address = document.getElementById('address').value;
+    function updateProgress() {
+        let score = 0;
+        let total = (selectedProduct === 'recipes') ? 1 : 4;
 
-        // Валидация для физических товаров
+        if (selectedProduct) score++;
         if (selectedProduct !== 'recipes') {
-            if (name.length < 5 || phone.length < 7 || address.length < 10) {
-                tg.HapticFeedback.notificationOccurred('error');
-                alert("Пожалуйста, заполните данные для доставки");
-                return;
-            }
+            if (document.getElementById('name').value.length > 5) score++;
+            if (document.getElementById('phone').value.length === 18) score++;
+            if (document.getElementById('address').value.length > 10) score++;
+        }
+
+        const percent = (score / total) * 100;
+        document.getElementById('progress').style.width = percent + '%';
+        
+        const btn = document.getElementById('submit_btn');
+        if (percent === 100) { btn.classList.add('ready'); } 
+        else { btn.classList.remove('ready'); }
+    }
+
+    function sendData() {
+        const btn = document.getElementById('submit_btn');
+        if (!btn.classList.contains('ready') && selectedProduct !== 'recipes') {
+            tg.HapticFeedback.notificationOccurred('error');
+            return;
         }
 
         const data = {
             product_type: selectedProduct,
             price: selectedPrice,
-            name: name,
-            phone: phone,
-            address: address
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value
         };
 
-        tg.HapticFeedback.notificationOccurred('success');
         tg.sendData(JSON.stringify(data));
         tg.close();
-    });
+    }
 </script>
-
 </body>
 </html>
