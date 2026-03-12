@@ -10,159 +10,118 @@
             --primary: var(--tg-theme-button-color, #2481cc);
             --bg: var(--tg-theme-bg-color, #ffffff);
             --text: var(--tg-theme-text-color, #222222);
-            --hint: var(--tg-theme-hint-color, #8e8e93);
             --sec-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
         }
-
-        body {
-            font-family: -apple-system, system-ui, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0; padding: 20px; padding-bottom: 100px;
-        }
-
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h2 { margin: 0; font-size: 20px; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; }
         
-        /* Аккордеон (Детали набора и FAQ) */
-        .details-container { margin-bottom: 20px; }
-        details {
-            background: var(--sec-bg);
-            padding: 10px 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
+        /* Аккордеоны */
+        details { background: var(--sec-bg); padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 14px; }
         summary { font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
-        summary::after { content: '▼'; font-size: 10px; opacity: 0.5; }
-        details[open] summary::after { content: '▲'; }
-        .details-content { padding-top: 10px; line-height: 1.5; opacity: 0.9; }
+        
+        /* Выбор тарифа */
+        .option-card {
+            border: 2px solid var(--sec-bg); border-radius: 15px; padding: 15px; margin-bottom: 12px; 
+            cursor: pointer; transition: all 0.2s; position: relative;
+        }
+        .option-card.active { border-color: var(--primary); background: rgba(36, 129, 204, 0.05); }
+        .option-card b { display: block; font-size: 16px; margin-bottom: 4px; }
+        .option-card span { font-size: 13px; opacity: 0.7; }
+        .price-tag { position: absolute; right: 15px; top: 15px; font-weight: 700; color: var(--primary); }
+        .badge { background: var(--primary); color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; position: absolute; top: -10px; left: 15px; }
 
         /* Поля ввода */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; color: var(--hint); }
-        input, select, textarea {
-            width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px;
-            background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box;
+        .form-group { margin-top: 20px; }
+        label { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 600; opacity: 0.6; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 10px; 
+            background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box; margin-bottom: 10px;
         }
 
-        /* VIP Upsell Блок */
-        .upsell-card {
-            background: rgba(36, 129, 204, 0.1);
-            border: 2px dashed var(--primary);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            animation: pulse 2s infinite;
-        }
-        .upsell-card input { width: 22px; height: 22px; margin-right: 12px; }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.01); }
-            100% { transform: scale(1); }
-        }
-
-        /* Кнопка */
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: var(--bg); box-sizing: border-box; }
-        .btn-main {
-            width: 100%; padding: 16px; border: none; border-radius: 12px;
-            background: var(--primary); color: white; font-size: 16px; font-weight: 700;
-        }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: var(--bg); border-top: 1px solid rgba(0,0,0,0.05); box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--primary); color: white; font-size: 16px; font-weight: 700; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h2>✨ Ваш заказ</h2>
+<div style="text-align:center; margin-bottom:20px;"><h2>🍏 Выберите ваш формат</h2></div>
+
+<div class="option-card" onclick="selectType('recipes', 990, this)">
+    <b>📖 Сборник рецептов (PDF)</b>
+    <span>28 любимых рецептов прямо в Telegram</span>
+    <div class="price-tag">990₽</div>
 </div>
 
-<div class="details-container">
-    <details>
-        <summary>📦 Что входит в набор?</summary>
-        <div class="details-content">
-            • 154 магнитные карточки (категории: мясо, гарниры, супы и т.д.)<br>
-            • Специальный маркер для ваших записей<br>
-            • Инструкция по планированию меню<br>
-            • Упаковка, в которой приятно дарить
-        </div>
-    </details>
-    <details>
-        <summary>🚚 Доставка и оплата</summary>
-        <div class="details-content">
-            Отправляем СДЭКом или Почтой РФ. После оплаты бот пришлет подтверждение, а через 24 часа — трек-номер для отслеживания.
-        </div>
-    </details>
+<div class="option-card" onclick="selectType('cards', 1990, this)">
+    <b>🧲 Магнитные карточки</b>
+    <span>154 магнита + маркер (Доставка РФ)</span>
+    <div class="price-tag">1990₽</div>
 </div>
 
-<div class="form-group">
-    <label>ФИО</label>
-    <input type="text" id="name" placeholder="Иванов Иван Иванович">
+<div class="option-card active" onclick="selectType('combo', 2680, this)">
+    <div class="badge">ВЫГОДНО</div>
+    <b>🔥 КОМБО: Карточки + PDF-рецепты</b>
+    <span>Полная система управления кухней</span>
+    <div class="price-tag">2680₽</div>
 </div>
 
-<div class="form-group">
-    <label>Телефон</label>
-    <input type="tel" id="phone" placeholder="+7 (900) 000-00-00">
-</div>
-
-<div class="form-group">
-    <label>Адрес (Город, ПВЗ или дом)</label>
-    <textarea id="address" rows="2" placeholder="г. Казань, ул. Ленина..."></textarea>
-</div>
-
-<div class="form-group">
-    <label>Способ доставки</label>
-    <select id="delivery">
-        <option value="СДЭК (ПВЗ)">СДЭК (Пункт выдачи)</option>
-        <option value="Почта России">Почта России</option>
-        <option value="Курьер">Курьер до двери</option>
-    </select>
-</div>
-
-<div class="upsell-card">
-    <input type="checkbox" id="upsell">
-    <div style="font-size: 14px;">
-        <b>Добавить 28 рецептов? 🔥</b><br>
-        Спеццена: <span style="color:var(--primary)">+690₽</span> (вместо 990₽)
+<details style="margin-top: 20px;">
+    <summary>📦 Что именно в наборе?</summary>
+    <div style="padding-top:10px; opacity:0.8;">
+        154 магнита с ламинацией, цветовая навигация, маркер «пиши-стирай» и чек-лист.
     </div>
+</details>
+
+<div id="shipping_info" class="form-group">
+    <label>ДАННЫЕ ДЛЯ ДОСТАВКИ (СДЭК/Почта)</label>
+    <input type="text" id="name" placeholder="ФИО">
+    <input type="tel" id="phone" placeholder="Телефон">
+    <textarea id="address" rows="2" placeholder="Город, адрес или номер ПВЗ"></textarea>
 </div>
 
 <div class="footer">
-    <button class="btn-main" id="main_btn">Подтвердить заказ</button>
+    <button class="btn-main" id="order_btn">Оформить за 2680₽</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
+    let currentType = 'combo';
+    let currentPrice = 2680;
 
-    document.getElementById('main_btn').addEventListener('click', () => {
+    function selectType(type, price, el) {
+        currentType = type;
+        currentPrice = price;
+        
+        // Визуальное переключение
+        document.querySelectorAll('.option-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        
+        // Скрытие доставки для цифровых товаров
+        document.getElementById('shipping_info').style.display = (type === 'recipes') ? 'none' : 'block';
+        document.getElementById('order_btn').innerText = `Оформить за ${price}₽`;
+        tg.HapticFeedback.selectionChanged();
+    }
+
+    document.getElementById('order_btn').addEventListener('click', () => {
         let name = document.getElementById('name').value;
         let phone = document.getElementById('phone').value;
         let address = document.getElementById('address').value;
-        let is_combo = document.getElementById('upsell').checked;
 
-        if (name.length < 5 || phone.length < 7 || address.length < 10) {
-            tg.HapticFeedback.notificationOccurred('error');
-            alert("Пожалуйста, заполните все поля корректно");
+        // Валидация (для рецептов она короче)
+        if (currentType !== 'recipes' && (name.length < 5 || phone.length < 7)) {
+            alert("Пожалуйста, заполните данные для доставки");
             return;
         }
 
-        let data = {
+        tg.sendData(JSON.stringify({
+            product_type: currentType,
+            price: currentPrice,
             name: name,
             phone: phone,
-            address: address,
-            delivery: document.getElementById('delivery').value,
-            quantity: 1,
-            is_combo: is_combo
-        };
-
-        tg.HapticFeedback.notificationOccurred('success');
-        tg.sendData(JSON.stringify(data));
+            address: address
+        }));
         tg.close();
     });
 </script>
-
 </body>
 </html>
