@@ -265,7 +265,7 @@
             setTimeout(() => {
                 // Просто выстреливаем страницу в самый верх
                 window.scrollTo({
-                    top: 0,
+                    top: document.documentElement.scrollHeight,
                     behavior: 'smooth'
                 });
             }, 300);
