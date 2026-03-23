@@ -105,7 +105,7 @@
 <div id="options">
     <div class="option-card" onclick="selectOption('recipes', 990, this)">
         <b>📖 Рецепты (PDF-сборник)</b>
-        <span>28 готовых решений: когда нет сил думать, просто открываешь и готовишь. Доступ сразу.</span>
+        <span>28 готовых рецептов: когда нет сил думать, просто открываешь и готовишь. Доступ сразу.</span>
         <div class="price-tag">990₽</div>
     </div>
 
@@ -153,8 +153,8 @@
         <input type="tel" id="phone" placeholder="+7 (___) ___-__-__">
     </div>
     <div class="form-group">
-        <label>Адрес доставки (СДЭК или дом)</label>
-        <textarea id="address" rows="2" placeholder="Город, улица, дом или адрес ПВЗ СДЭК" oninput="updateProgress()"></textarea>
+        <label>Адрес доставки (Яндекс Доставка или СДЭК)</label>
+        <textarea id="address" rows="2" placeholder="Город, улица, дом или адрес ПВЗ Яндекс, СДЭК" oninput="updateProgress()"></textarea>
     </div>
 </div>
 
@@ -176,8 +176,8 @@
         const seed = now.getDate() + now.getMonth();
         const ordersCount = 3 + (seed % 5); 
 
-        if (now.getHours() < 16) {
-            textElem.innerHTML = `Сегодня отправляем <b>${ordersCount} заказов</b>. Успей оформить до <b>16:00</b>, чтобы карточки уехали сегодня!`;
+        if (now.getHours() < 17) {
+            textElem.innerHTML = `На сегодня уже <b>${ordersCount} заказов</b>. Успей оформить до <b>17:00</b>, чтобы карточки уехали сегодня!`;
         } else {
             textElem.innerHTML = `Дневная партия уехала. Успей оформить сейчас, чтобы попасть в <b>первую отправку завтра утром</b>!`;
         }
