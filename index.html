@@ -263,7 +263,7 @@
         input.addEventListener('focus', (e) => {
             setTimeout(() => {
                 // Находим, где находится поле относительно начала всей страницы
-                const yOffset = -300; // На сколько пикселей выше центра поднять (под заголовок)
+                const yOffset = -1500; // На сколько пикселей выше центра поднять (под заголовок)
                 const y = e.target.getBoundingClientRect().top + window.pageYOffset + yOffset;
                 window.scrollTo({
                     top: y,
