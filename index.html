@@ -260,12 +260,13 @@
     const inputs = document.querySelectorAll('input, textarea');
 
     inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            // Ждем 300мс, пока клавиатура начнет выезжать
+        input.addEventListener('focus', (e) => {
             setTimeout(() => {
-                // Просто выстреливаем страницу в самый верх
+                // Находим, где находится поле относительно начала всей страницы
+                const yOffset = -100; // На сколько пикселей выше центра поднять (под заголовок)
+                const y = e.target.getBoundingClientRect().top + window.pageYOffset + yOffset;
                 window.scrollTo({
-                    top: document.documentElement.scrollHeight,
+                    top: y,
                     behavior: 'smooth'
                 });
             }, 300);
