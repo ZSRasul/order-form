@@ -240,6 +240,8 @@
             return;
         }
 
+        tg.HapticFeedback.notificationOccurred('success');
+
         const data = {
             product_type: selectedProduct,
             price: selectedPrice,
@@ -248,24 +250,26 @@
             address: document.getElementById('address').value || "Доставка в PDF"
         };
 
-        tg.sendData(JSON.stringify(data));
-        tg.close();
+        setTimeout(() => {
+            tg.sendData(JSON.stringify(data));
+            tg.close();
+        }, 100);
     }
-// --- Исправление скролла для мобильных устройств ---
-    const inputs = document.querySelectorAll('input, textarea');
 
-    inputs.forEach(input => {
-        input.addEventListener('focus', (e) => {
-            // Задержка 300мс дает клавиатуре время полностью открыться
-            setTimeout(() => {
-                e.target.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-            }, 300);
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', (e) => {
+                setTimeout(() => {
+                    e.target.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 400);
+            });
         });
     });
-    // --------------------------------------------------
+
     updateProgress();
 </script>
 </body>
