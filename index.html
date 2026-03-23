@@ -79,7 +79,7 @@
             background: var(--sec-bg); color: var(--text); font-size: 16px; box-sizing: border-box;
         }
 
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); box-sizing: border-box; z-index: 100; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 20px; }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--bg); box-sizing: border-box; z-index: 100; border-top: 1px solid rgba(0,0,0,0.05); }
         .btn-main {
             width: 100%; padding: 18px; border: none; border-radius: 16px;
             background: var(--primary); color: white; font-size: 16px; font-weight: 700;
@@ -240,8 +240,6 @@
             return;
         }
 
-        tg.HapticFeedback.notificationOccurred('success');
-
         const data = {
             product_type: selectedProduct,
             price: selectedPrice,
@@ -250,37 +248,9 @@
             address: document.getElementById('address').value || "Доставка в PDF"
         };
 
-        setTimeout(() => {
-            tg.sendData(JSON.stringify(data));
-            tg.close();
-        }, 100);
+        tg.sendData(JSON.stringify(data));
+        tg.close();
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-    const inputs = document.querySelectorAll('input, textarea');
-
-    inputs.forEach(input => {
-        // Используем touchstart для мгновенной реакции на касание
-        input.addEventListener('touchstart', () => {
-            // Если поле еще не в фокусе, даем команду на взлет
-            if (document.activeElement !== input) {
-                setTimeout(() => {
-                    window.scrollTo({ 
-                        top: document.documentElement.scrollHeight, 
-                        behavior: 'smooth' 
-                    });
-                }, 50);
-            }
-        });
-        
-        // Оставляем focus для тех, кто зашел с компьютера или использует TAB
-        input.addEventListener('focus', () => {
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 100);
-        });
-    });
-});
 
     updateProgress();
 </script>
