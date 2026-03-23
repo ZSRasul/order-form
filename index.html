@@ -260,16 +260,24 @@
     const inputs = document.querySelectorAll('input, textarea');
 
     inputs.forEach(input => {
-        input.addEventListener('focus', (e) => {
+        // Используем touchstart для мгновенной реакции на касание
+        input.addEventListener('touchstart', () => {
+            // Если поле еще не в фокусе, даем команду на взлет
+            if (document.activeElement !== input) {
+                setTimeout(() => {
+                    window.scrollTo({ 
+                        top: 0, 
+                        behavior: 'smooth' 
+                    });
+                }, 50);
+            }
+        });
+        
+        // Оставляем focus для тех, кто зашел с компьютера или использует TAB
+        input.addEventListener('focus', () => {
             setTimeout(() => {
-                // Находим, где находится поле относительно начала всей страницы
-                const yOffset = -1500; // На сколько пикселей выше центра поднять (под заголовок)
-                const y = e.target.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({
-                    top: y,
-                    behavior: 'smooth'
-                });
-            }, 300);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
         });
     });
 });
