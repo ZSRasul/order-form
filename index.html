@@ -337,18 +337,29 @@
         const hasUpsell = document.getElementById('upsell_check').checked;
         const isRecipes = (selectedProduct === 'recipes');
         
-        // Формируем чистый объект данных
+        // Формируем product_type так, чтобы Python его узнал
+        let productTypeForPython = "";
+        if (selectedProduct === 'combo') {
+            productTypeForPython = "COMBO (Карточки + Рецепты)";
+        } else if (selectedProduct === 'recipes') {
+            productTypeForPython = "Рецепты (PDF)";
+        } else {
+            productTypeForPython = "Карточки";
+        }
+
+        // Если есть допродажа, добавляем слово для веса (необязательно, но для порядка)
+        if (hasUpsell) {
+            productTypeForPython += " + Подарочный набор";
+        }
+        
         const data = {
-            product_type: isRecipes ? "Рецепты (Цифра)" : (selectedProduct === 'combo' ? "COMBO" : "Карточки"),
-            is_upsell: hasUpsell,
+            product_type: productTypeForPython, // Теперь здесь точно есть "рецепт", "combo" или "карточк"
             price: selectedPrice + (hasUpsell ? 1490 : 0),
             delivery_method: isRecipes ? "Цифра" : selectedDelivery,
             name: isRecipes ? "Цифровой клиент" : document.getElementById('name').value.trim(),
             phone: isRecipes ? "—" : document.getElementById('phone').value,
-            address: isRecipes ? "Telegram" : document.getElementById('address').value.trim()
+            address: isRecipes ? "В боте" : document.getElementById('address').value.trim()
         };
-
-        if (hasUpsell) data.product_type += " + Подарок";
 
         tg.sendData(JSON.stringify(data));
         tg.close();
