@@ -12,23 +12,24 @@
             --text: var(--tg-theme-text-color, #222222);
             --sec-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
             --hint: var(--tg-theme-hint-color, #8e8e93);
+            --success: #2e7d32;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0; padding: 20px; padding-bottom: 100px;
+            margin: 0; padding: 20px; padding-bottom: 120px;
             opacity: 0; transition: opacity 0.5s ease;
         }
 
         #progress {
             position: fixed; top: 0; left: 0; height: 3px;
-            width: 0%; background: var(--primary);
+            width: 50%; background: var(--primary);
             z-index: 1000; transition: width 0.3s ease;
         }
 
-        .header { text-align: center; margin-bottom: 25px; }
+        .header { text-align: center; margin-bottom: 20px; }
         .header h2 { margin: 0; font-size: 22px; font-weight: 700; }
 
         .urgency-container {
@@ -71,6 +72,30 @@
         details[open] summary::after { transform: rotate(90deg); }
         .details-content { padding: 0 16px 12px; font-size: 13px; line-height: 1.5; opacity: 0.8; }
 
+        /* Доставка */
+        .free-shipping-badge {
+            display: inline-block; background: #e8f5e9; color: var(--success);
+            font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+            margin-bottom: 10px; text-transform: uppercase;
+        }
+        .delivery-selector { display: flex; gap: 8px; margin-bottom: 15px; }
+        .delivery-option {
+            flex: 1; padding: 10px; background: var(--sec-bg);
+            border: 1.5px solid transparent; border-radius: 12px;
+            text-align: center; font-size: 12px; font-weight: 600; cursor: pointer;
+        }
+        .delivery-option.active { border-color: var(--primary); color: var(--primary); background: rgba(36,129,204,0.05); }
+
+        /* Upsell */
+        .upsell-card {
+            background: linear-gradient(135deg, rgba(36,129,204,0.05) 0%, rgba(36,129,204,0.1) 100%);
+            border: 1px dashed var(--primary); border-radius: 12px;
+            padding: 12px; margin: 20px 0; display: flex; align-items: center; gap: 12px; cursor: pointer;
+        }
+        .upsell-card input { width: 20px; height: 20px; accent-color: var(--primary); }
+        .upsell-info b { font-size: 14px; display: block; color: var(--primary); }
+        .upsell-info span { font-size: 12px; opacity: 0.8; }
+
         .form-section { margin-top: 25px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-size: 11px; font-weight: 700; color: var(--hint); text-transform: uppercase; }
@@ -105,21 +130,31 @@
 <div id="options">
     <div class="option-card" onclick="selectOption('recipes', 990, this)">
         <b>📖 Рецепты (PDF-сборник)</b>
-        <span>28 готовых рецептов: когда нет сил думать, просто открываешь и готовишь. Доступ сразу.</span>
+        <span>28 готовых рецептов с КБЖУ. Просто открываешь и готовишь за 20 минут. Доступ сразу.</span>
         <div class="price-tag">990₽</div>
     </div>
 
     <div class="option-card" onclick="selectOption('cards', 1990, this)">
         <b>🧲 Магнитные карточки</b>
-        <span>154 магнита + маркер. Система, которая сама планирует ваш рацион. Тот самый порядок из Reels.</span>
+        <span>154 магнита + маркер. Система, которая сама планирует рацион. Порядок из Reels.</span>
         <div class="price-tag">1990₽</div>
     </div>
 
     <div class="option-card active" onclick="selectOption('combo', 2680, this)">
         <div class="badge">Лучший выбор</div>
         <b>🔥 COMBO: Карточки + PDF</b>
-        <span>Полная система: магниты едут к вам, PDF открывается сразу.</span>
+        <span>Полная система: магниты едут к вам, сборник открывается сразу.</span>
         <div class="price-tag">2680₽</div>
+    </div>
+</div>
+
+<div id="upsell_section">
+    <div class="upsell-card" onclick="toggleUpsell()">
+        <input type="checkbox" id="upsell_check" onchange="updateProgress()">
+        <div class="upsell-info">
+            <b>🎁 Второй набор для подарка?</b>
+            <span>Добавьте еще одну систему всего за 1490₽</span>
+        </div>
     </div>
 </div>
 
@@ -134,16 +169,33 @@
         </div>
     </details>
     <details>
+        <summary>Подробнее про сборник рецептов 📖</summary>
+        <div class="details-content">
+            • <b>28 блюд:</b> завтраки, обеды и ужины из простых продуктов.<br>
+            • <b>Удобство:</b> адаптированный PDF для смартфона.<br>
+            • <b>Польза:</b> КБЖУ и баланс нутриентов для каждого рецепта.
+        </div>
+    </details>
+    <details>
         <summary>Частые вопросы (FAQ)</summary>
         <div class="details-content">
-            <b>Как крепятся?</b> Надежный магнитный слой, держатся на холодильнике.<br>
-            <b>Срок доставки?</b> Отправляем в течение 24ч. По РФ 3-5 дней.<br>
-            <b>Это безопасно?</b> Да, вы получите трек-номер сразу после отправки.
+            <b>Как крепятся?</b> Надежный магнитный слой на холодильник.<br>
+            <b>Срок доставки?</b> Отправляем за 24ч. По РФ 3-5 дней.<br>
+            <b>Это безопасно?</b> Да, я лично отвечаю за отправку. Дам трек-номер.
         </div>
     </details>
 </div>
 
 <div id="shipping_section" class="form-section">
+    <div class="free-shipping-badge">🚛 Доставка по всей РФ — 0₽</div>
+    <div class="form-group">
+        <label>Способ доставки</label>
+        <div class="delivery-selector">
+            <div class="delivery-option active" onclick="setDelivery('Яндекс', this)">Яндекс</div>
+            <div class="delivery-option" onclick="setDelivery('СДЭК', this)">СДЭК</div>
+            <div class="delivery-option" onclick="setDelivery('Почта РФ', this)">Почта РФ</div>
+        </div>
+    </div>
     <div class="form-group">
         <label>ФИО получателя</label>
         <input type="text" id="name" placeholder="Иванов Иван Иванович" oninput="updateProgress()">
@@ -153,8 +205,8 @@
         <input type="tel" id="phone" placeholder="+7 (___) ___-__-__">
     </div>
     <div class="form-group">
-        <label>Адрес доставки (Яндекс Доставка или СДЭК)</label>
-        <textarea id="address" rows="2" placeholder="Город, улица, дом или адрес ПВЗ Яндекс, СДЭК" oninput="updateProgress()"></textarea>
+        <label id="address_label">Адрес ПВЗ или дома</label>
+        <textarea id="address" rows="2" placeholder="Город, улица, дом или адрес пункта выдачи" oninput="updateProgress()"></textarea>
     </div>
 </div>
 
@@ -168,6 +220,7 @@
 
     let selectedProduct = 'combo';
     let selectedPrice = 2680;
+    let selectedDelivery = 'Яндекс';
 
     function updateUrgency() {
         const now = new Date();
@@ -177,9 +230,9 @@
         const ordersCount = 3 + (seed % 5); 
 
         if (now.getHours() < 17) {
-            textElem.innerHTML = `На сегодня уже <b>${ordersCount} заказов</b>. Успей оформить до <b>17:00</b>, чтобы карточки уехали сегодня!`;
+            textElem.innerHTML = `Сегодня уже <b>${ordersCount} заказов</b>. Успей до <b>17:00</b>, чтобы посылка уехала сегодня!`;
         } else {
-            textElem.innerHTML = `Дневная партия уехала. Успей оформить сейчас, чтобы попасть в <b>первую отправку завтра утром</b>!`;
+            textElem.innerHTML = `Дневная партия уехала. Успей сейчас, чтобы попасть в <b>первую отправку завтра</b>!`;
         }
         banner.style.display = 'flex';
     }
@@ -187,6 +240,7 @@
     const phoneInput = document.getElementById('phone');
     phoneInput.addEventListener('input', (e) => {
         let val = e.target.value.replace(/\D/g, '');
+        if (val.length > 11) val = val.substring(0, 11);
         if (val.startsWith('7') || val.startsWith('8')) val = val.substring(1);
         let res = '+7 (';
         if (val.length > 0) res += val.substring(0, 3);
@@ -204,27 +258,53 @@
         element.classList.add('active');
         
         const shipping = document.getElementById('shipping_section');
-        shipping.style.display = (type === 'recipes') ? 'none' : 'block';
+        const upsell = document.getElementById('upsell_section');
         
-        document.getElementById('submit_btn').innerText = `Оформить за ${price}₽`;
+        if (type === 'recipes') {
+            shipping.style.display = 'none';
+            upsell.style.display = 'none';
+            document.getElementById('upsell_check').checked = false;
+        } else {
+            shipping.style.display = 'block';
+            upsell.style.display = 'flex';
+        }
+        
         updateProgress();
         tg.HapticFeedback.selectionChanged();
     }
 
+    function setDelivery(method, element) {
+        selectedDelivery = method;
+        document.querySelectorAll('.delivery-option').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        tg.HapticFeedback.selectionChanged();
+    }
+
+    function toggleUpsell() {
+        const check = document.getElementById('upsell_check');
+        check.checked = !check.checked;
+        tg.HapticFeedback.impactOccurred('light');
+        updateProgress();
+    }
+
     function updateProgress() {
+        const hasUpsell = document.getElementById('upsell_check').checked;
+        const finalPrice = selectedPrice + (hasUpsell ? 1490 : 0);
+        
         let isReady = false;
         if (selectedProduct === 'recipes') {
             isReady = true;
         } else {
             const nameOk = document.getElementById('name').value.trim().length > 5;
             const phoneOk = document.getElementById('phone').value.length === 18;
-            const addrOk = document.getElementById('address').value.trim().length > 10;
+            const addrOk = document.getElementById('address').value.trim().length > 8;
             isReady = nameOk && phoneOk && addrOk;
         }
 
         const btn = document.getElementById('submit_btn');
-        const progress = document.getElementById('progress');
+        btn.innerText = `Оформить за ${finalPrice}₽`;
         
+        const progress = document.getElementById('progress');
         if (isReady) {
             btn.classList.add('ready');
             progress.style.width = '100%';
@@ -240,12 +320,16 @@
             return;
         }
 
+        const hasUpsell = document.getElementById('upsell_check').checked;
+        const isRecipes = (selectedProduct === 'recipes');
+        
         const data = {
-            product_type: selectedProduct,
-            price: selectedPrice,
+            product_type: selectedProduct + (hasUpsell ? " + Подарок" : ""),
+            price: selectedPrice + (hasUpsell ? 1490 : 0),
+            delivery_method: isRecipes ? "Цифра" : selectedDelivery,
             name: document.getElementById('name').value || "Цифровой заказ",
             phone: document.getElementById('phone').value || "Не указан",
-            address: document.getElementById('address').value || "Доставка в PDF"
+            address: isRecipes ? "В боте" : document.getElementById('address').value
         };
 
         tg.sendData(JSON.stringify(data));
