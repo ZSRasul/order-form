@@ -231,6 +231,7 @@
         banner.style.display = 'flex';
     }
 
+    // Форматирование телефона
     const phoneInput = document.getElementById('phone');
     phoneInput.addEventListener('input', (e) => {
         let val = e.target.value.replace(/\D/g, '');
@@ -282,18 +283,22 @@
     }
 
     function updateProgress() {
-        // Логика проверки отдаленных регионов
-        const addressText = document.getElementById('address').value.toLowerCase();
+        const addrField = document.getElementById('address');
         const badge = document.getElementById('shipping_badge');
-        const remoteRegions = ['магадан', 'якутск', 'норильск', 'сахалин', 'камчатк', 'анадырь', 'чукот', 'дудинка'];
-        const isRemote = remoteRegions.some(region => addressText.includes(region));
+        
+        // Проверка региона только если поле активно
+        if (selectedProduct !== 'recipes' && addrField) {
+            const addressText = addrField.value.toLowerCase();
+            const remoteRegions = ['магадан', 'якутск', 'норильск', 'сахалин', 'камчатк', 'анадырь', 'чукот', 'дудинка'];
+            const isRemote = remoteRegions.some(region => addressText.includes(region));
 
-        if (isRemote) {
-            badge.innerHTML = "📍 Регион: расчет доставки отдельно";
-            badge.classList.add('warning');
-        } else {
-            badge.innerHTML = "🚛 Доставка по РФ — 0₽*";
-            badge.classList.remove('warning');
+            if (isRemote) {
+                badge.innerHTML = "📍 Регион: расчет доставки отдельно";
+                badge.classList.add('warning');
+            } else {
+                badge.innerHTML = "🚛 Доставка по РФ — 0₽*";
+                badge.classList.remove('warning');
+            }
         }
 
         const hasUpsell = document.getElementById('upsell_check').checked;
@@ -323,7 +328,8 @@
     }
 
     function sendData() {
-        if (!document.getElementById('submit_btn').classList.contains('ready')) {
+        const btn = document.getElementById('submit_btn');
+        if (!btn.classList.contains('ready')) {
             tg.HapticFeedback.notificationOccurred('error');
             return;
         }
@@ -331,19 +337,24 @@
         const hasUpsell = document.getElementById('upsell_check').checked;
         const isRecipes = (selectedProduct === 'recipes');
         
+        // Формируем чистый объект данных
         const data = {
-            product_type: selectedProduct + (hasUpsell ? " + Подарок" : ""),
+            product_type: isRecipes ? "Рецепты (Цифра)" : (selectedProduct === 'combo' ? "COMBO" : "Карточки"),
+            is_upsell: hasUpsell,
             price: selectedPrice + (hasUpsell ? 1490 : 0),
             delivery_method: isRecipes ? "Цифра" : selectedDelivery,
-            name: document.getElementById('name').value || "Цифровой заказ",
-            phone: document.getElementById('phone').value || "Не указан",
-            address: isRecipes ? "В боте" : document.getElementById('address').value
+            name: isRecipes ? "Цифровой клиент" : document.getElementById('name').value.trim(),
+            phone: isRecipes ? "—" : document.getElementById('phone').value,
+            address: isRecipes ? "Telegram" : document.getElementById('address').value.trim()
         };
+
+        if (hasUpsell) data.product_type += " + Подарок";
 
         tg.sendData(JSON.stringify(data));
         tg.close();
     }
 
+    // Инициализация
     updateProgress();
 </script>
 </body>
