@@ -203,7 +203,7 @@
 </div>
 
 <div class="info-container">
-    <details open> <summary>📦 Детали системы</summary>
+    <details> <summary>📦 Детали системы</summary>
         <div class="details-content">
             • <b>154 магнита:</b> ламинированные, не боятся влаги и жирных рук.<br>
             • <b>Маркер:</b> «пиши-стирай» в комплекте для своих заметок.<br>
@@ -215,16 +215,17 @@
     <details>
         <summary>🚚 Доставка и оплата</summary>
         <div class="details-content">
-            • <b>Скорость:</b> отправка СДЭК/Яндекс/Почтой за 24 часа.<br>
+            • <b>Скорость:</b> отправка Яндекс/СДЭК/Почтой за 24 часа.<br>
             • <b>Цифра:</b> PDF с рецептами прилетит в бот сразу после оплаты.<br>
             • <b>Оплата:</b> безопасный платеж через Telegram.
         </div>
     </details>
 </div>
-
-<div id="shipping_section" class="form-section">
-    <div id="shipping_badge" class="free-shipping-badge">🚛 Доставка по РФ — 0₽*</div>
-    <div class="shipping-note">*Бесплатно при заказе от 2000₽ (кроме удаленных регионов)</div>
+    
+<div id="main_form_container">
+    <div id="shipping_section" class="form-section">
+        <div id="shipping_badge" class="free-shipping-badge">🚛 Доставка по РФ — 0₽*</div>
+        <div class="shipping-note">*Бесплатно при заказе от 2000₽ (кроме удаленных регионов)</div>
     </div>
 
     <div class="form-group">
@@ -304,7 +305,7 @@
         document.querySelectorAll('.option-card').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
         
-        const shipping = document.getElementById('shipping_section');
+        const shipping = document.getElementById('main_form_container');
         const upsell = document.getElementById('upsell_section');
         
         if (type === 'recipes') {
