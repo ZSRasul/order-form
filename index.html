@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Оформление заказа</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
+<style>
         :root {
             --primary: #2481cc;
             --bg: var(--tg-theme-bg-color, #ffffff);
@@ -40,6 +40,7 @@
             align-items: center; gap: 10px; animation: slideUp 0.4s ease;
         }
 
+        /* Карточки товаров */
         .option-card {
             background: var(--sec-bg);
             border: 2px solid transparent;
@@ -52,7 +53,7 @@
             background: rgba(36, 129, 204, 0.05);
             transform: scale(1.01);
         }
-        .option-card b { display: block; font-size: 16px; margin-bottom: 4px; padding-right: 60px; }
+        .option-card b { display: block; font-size: 17px !important; margin-bottom: 4px; padding-right: 60px; }
         .option-card span { font-size: 12px; opacity: 0.7; line-height: 1.4; display: block; }
         .price-tag { position: absolute; right: 16px; top: 16px; font-weight: 700; color: var(--primary); }
         
@@ -63,43 +64,44 @@
             text-transform: uppercase;
         }
 
+        /* Преимущества и цены */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .benefit-item {
+            background: var(--sec-bg);
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .old-price {
+            text-decoration: line-through;
+            opacity: 0.5;
+            font-size: 13px;
+            margin-right: 5px;
+            font-weight: 400;
+        }
+        .badge-save {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+
+        /* Доставка и формы */
         .free-shipping-badge {
             display: inline-block; background: #e8f5e9; color: var(--success);
             font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px;
             margin-bottom: 4px; text-transform: uppercase; transition: all 0.3s ease;
         }
-
-        .benefits-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .benefit-item {
-        background: var(--sec-bg);
-        padding: 10px;
-        border-radius: 12px;
-        font-size: 11px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .old-price {
-        text-decoration: line-through;
-        opacity: 0.5;
-        font-size: 13px;
-        margin-right: 5px;
-        font-weight: 400;
-    }
-    .option-card b { font-size: 17px !important; }
-    .badge-save {
-        background: #e8f5e9;
-        color: #2e7d32;
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 5px;
-    }
         .free-shipping-badge.warning { background: #fff3e0; color: var(--warning); }
         .shipping-note { font-size: 10px; opacity: 0.5; margin-bottom: 12px; margin-left: 2px; }
 
