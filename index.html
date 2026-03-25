@@ -63,7 +63,6 @@
             text-transform: uppercase;
         }
 
-        /* Доставка */
         .free-shipping-badge {
             display: inline-block; background: #e8f5e9; color: var(--success);
             font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px;
@@ -80,7 +79,6 @@
         }
         .delivery-option.active { border-color: var(--primary); color: var(--primary); background: rgba(36,129,204,0.05); }
 
-        /* Upsell */
         .upsell-card {
             background: linear-gradient(135deg, rgba(36,129,204,0.05) 0%, rgba(36,129,204,0.1) 100%);
             border: 1px dashed var(--primary); border-radius: 12px;
@@ -129,23 +127,23 @@
 </div>
 
 <div id="options">
-    <div class="option-card" onclick="selectOption('recipes', 990, this)">
+    <div class="option-card" onclick="selectOption('recipes', PRICES.recipes, this)">
         <b>📖 Рецепты (PDF-сборник)</b>
-        <span>28 готовых рецептов с КБЖУ: когда нет сил думать, просто открываешь и готовишь. Доступ сразу.</span>
-        <div class="price-tag">990₽</div>
+        <span>28 готовых рецептов с КБЖУ: когда нет сил думать, открываешь и готовишь. Доступ сразу.</span>
+        <div class="price-tag" id="price_recipes">990₽</div>
     </div>
 
-    <div class="option-card" onclick="selectOption('cards', 1990, this)">
+    <div class="option-card" onclick="selectOption('cards', PRICES.cards, this)">
         <b>🧲 Магнитные карточки</b>
-        <span>154 магнита + маркер. Система, которая сама отслеживает продукты. Порядок из Reels.</span>
-        <div class="price-tag">1990₽</div>
+        <span>154 магнита + маркер. Система, которая помогает отслеживать продукты.</span>
+        <div class="price-tag" id="price_cards">2490₽</div>
     </div>
 
-    <div class="option-card active" onclick="selectOption('combo', 2680, this)">
+    <div class="option-card active" onclick="selectOption('combo', PRICES.combo, this)">
         <div class="badge">Лучший выбор</div>
         <b>🔥 COMBO: Карточки + PDF</b>
         <span>Полная система: карточки едут к вам, сборник рецептов открывается сразу.</span>
-        <div class="price-tag">2680₽</div>
+        <div class="price-tag" id="price_combo">2990₽</div>
     </div>
 </div>
 
@@ -153,8 +151,8 @@
     <div class="upsell-card" onclick="toggleUpsell()">
         <input type="checkbox" id="upsell_check" onchange="updateProgress()">
         <div class="upsell-info">
-            <b>🎁 Второй набор для подарка?</b>
-            <span>Добавьте еще одну систему всего за 1490₽</span>
+            <b>🎁 Второй набор для мамы или друга?</b>
+            <span>Добавьте еще одну систему всего за 1990₽ (вместо 2490₽)</span>
         </div>
     </div>
 </div>
@@ -176,7 +174,7 @@
         <div class="details-content">
             • <b>Отправка:</b> в течение 24 часов.<br>
             • <b>Срок:</b> 3–5 дней по РФ.<br>
-            • <b>Цифра:</b> PDF прилетает в бот сразу после оплаты.
+            • <b>Цифра:</b> PDF прилетает в бот сразу после подтверждения оплаты.
         </div>
     </details>
 </div>
@@ -208,15 +206,23 @@
 </div>
 
 <div class="footer">
-    <button class="btn-main" id="submit_btn" onclick="sendData()">Оформить за 2680₽</button>
+    <button class="btn-main" id="submit_btn" onclick="sendData()">Оформить за 2990₽</button>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
     tg.expand();
 
+    // ЦЕНТР УПРАВЛЕНИЯ ЦЕНАМИ
+    const PRICES = {
+        recipes: 990,
+        cards: 2490,
+        combo: 2990,
+        upsell: 1990
+    };
+
     let selectedProduct = 'combo';
-    let selectedPrice = 2680;
+    let selectedPrice = PRICES.combo;
     let selectedDelivery = 'Яндекс';
 
     function updateUrgency() {
@@ -234,7 +240,6 @@
         banner.style.display = 'flex';
     }
 
-    // Форматирование телефона
     const phoneInput = document.getElementById('phone');
     phoneInput.addEventListener('input', (e) => {
         let val = e.target.value.replace(/\D/g, '');
@@ -289,7 +294,6 @@
         const addrField = document.getElementById('address');
         const badge = document.getElementById('shipping_badge');
         
-        // Проверка региона только если поле активно
         if (selectedProduct !== 'recipes' && addrField) {
             const addressText = addrField.value.toLowerCase();
             const remoteRegions = ['магадан', 'якутск', 'норильск', 'сахалин', 'камчатк', 'анадырь', 'чукот', 'дудинка'];
@@ -305,7 +309,7 @@
         }
 
         const hasUpsell = document.getElementById('upsell_check').checked;
-        const finalPrice = selectedPrice + (hasUpsell ? 1490 : 0);
+        const finalPrice = selectedPrice + (hasUpsell ? PRICES.upsell : 0);
         
         let isReady = false;
         if (selectedProduct === 'recipes') {
@@ -354,8 +358,9 @@
         }
         
         const data = {
-            product_type: productTypeForPython, // Теперь здесь точно есть "рецепт", "combo" или "карточк"
-            price: selectedPrice + (hasUpsell ? 1490 : 0),
+            product_type: productTypeForPython,
+            quantity: hasUpsell ? 2 : 1,
+            price: selectedPrice + (hasUpsell ? PRICES.upsell : 0),
             delivery_method: isRecipes ? "Цифра" : selectedDelivery,
             name: isRecipes ? "Цифровой клиент" : document.getElementById('name').value.trim(),
             phone: isRecipes ? "—" : document.getElementById('phone').value,
@@ -366,7 +371,11 @@
         tg.close();
     }
 
-    // Инициализация
+    // Инициализация цен в карточках из объекта PRICES
+    document.getElementById('price_recipes').innerText = PRICES.recipes + '₽';
+    document.getElementById('price_cards').innerText = PRICES.cards + '₽';
+    document.getElementById('price_combo').innerText = PRICES.combo + '₽';
+    
     updateProgress();
 </script>
 </body>
